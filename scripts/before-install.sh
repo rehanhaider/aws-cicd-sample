@@ -1,19 +1,46 @@
 #!/bin/bash
-# Install Nginx if it's not already installed
+
+set -e
+
+echo "Installing Nginx if not present..."
 if ! rpm -q nginx &> /dev/null; then
-    echo "Nginx not found. Installing..."
     sudo amazon-linux-extras install nginx1 -y
 else
     echo "Nginx already installed."
 fi
 
-# Clean up previous deployment directory
 DEPLOY_DIR="/var/www/html"
-if [ -d "$DEPLOY_DIR" ]; then
-    echo "Cleaning up $DEPLOY_DIR..."
-    sudo rm -rf ${DEPLOY_DIR}/*
-else
-    echo "Creating deployment directory $DEPLOY_DIR..."
-    sudo mkdir -p $DEPLOY_DIR
-    sudo chown nginx:nginx $DEPLOY_DIR # Or appropriate user/group for your web server
-fi
+
+echo "Ensuring $DEPLOY_DIR exists..."
+sudo mkdir -p $DEPLOY_DIR
+sudo chown nginx:nginx $DEPLOY_DIR
+
+NGINX_CONF="/etc/nginx/conf.d/default.conf"
+
+echo "Configuring Nginx to serve from $DEPLOY_DIR..."
+
+sudo tee $NGINX_CONF > /dev/null <<EOF
+server {
+    listen       80;
+    server_name  localhost;
+
+    location / {
+        root   $DEPLOY_DIR;
+        index  index.html index.htm;
+    }
+
+    error_page  404              /404.html;
+
+    location = /40x.html {
+    }
+
+    error_page   500 502 503 504  /50x.html;
+
+    location = /50x.html {
+    }
+}
+EOF
+
+echo "Restarting Nginx to apply config changes..."
+sudo systemctl restart nginx
+sudo systemctl enable nginx
