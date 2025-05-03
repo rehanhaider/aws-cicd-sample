@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /index.html # Source file from the build artifact
+    destination: /var/www/html # Destination directory on the EC2 instance
+hooks:
+  BeforeInstall:
+    - location: scripts/before-install.sh # Script to run before installation
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/after-install.sh # Script to run after installation
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/application-start.sh # Script to start the application (or ensure web server is running)
+      timeout: 300
+      runas: root

@@ -1,0 +1,23 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18 # Example runtime, can be adjusted if needed for tests/build steps
+    commands:
+      - echo "No specific install steps needed for static HTML..."
+  build:
+    commands:
+      - echo "No build steps needed, just packaging files..."
+      # If you had build steps (e.g., npm install, npm run build), they would go here.
+  post_build:
+    commands:
+      - echo "Build completed on $(date)"
+artifacts:
+  files:
+    - index.html
+    - appspec.yml
+    - scripts/**/* # Include all scripts
+# If using artifact caching:
+# cache:
+#   paths:
+#     - '/root/.npm/**/*' # Example path for npm cache
