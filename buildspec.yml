@@ -2,7 +2,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 18 # Example runtime, can be adjusted if needed for tests/build steps
+      nodejs: 20 # Example runtime, can be adjusted if needed for tests/build steps
     commands:
       - echo "No specific install steps needed for static HTML..."
   build:
